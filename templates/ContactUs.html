@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        .contact-info {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .contact-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .contact-info p {
+            color: #666;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Contact Us</h1>
+        
+        <div class="contact-info">
+            <h3>Get in Touch ? </h3>
+            <p><i>  ( I am a ghost in this world, </p>
+            <p>   .. ...   ... .. but my friends would love to hear from you ! ^_^ ) </i> </p>
+            <p>--------------------------------</p> 
+
+            <p> <b> Have a question, suggestion, or just want to say hello? </b> </p> 
+            <p>Contact Us directly in heaven or send a message below ! </p>
+            <p>--------------------------------</p> 
+            <p>Email: <b><i>UnknownWarrior@LostInTheVoid.org</b></i></p>
+            <p>Phone: +1 (911) 801-9999</p>
+        </div>
+        
+        <form action="/contact/submit" method="POST">
+            <div class="form-group">
+                <label for="name">What is your full name ? </label>
+                <input type="text" id="name" name="name" placeholder="Full Legal Name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">What is your email address?</label>
+                <input type="email" id="email" name="email" placeholder="Email Address (Required)" required>
+            </div>
+            <div class="form-group">
+                <label for="title">Subject:</label>
+                <input type="text" id="title" name="subject" placeholder="What's this about?" required>
+            </div>
+            <div class="form-group">
+                <label for="content">Your Message:</label>
+                <textarea id="content" name="content" placeholder="Tell us what's on your mind..." required></textarea>
+            </div>
+            <button type="submit" class="btn">Send Message</button>
+        </form>
+        
+        <div class="back-link">
+            <a href="/blog/content">← Back to Blog</a>
+        </div>
+    </div>
+</body>
+</html>
