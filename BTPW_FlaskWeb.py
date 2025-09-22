@@ -1,6 +1,13 @@
-####### Ben Tran #######
-### Date: 08/15/2025 ###
-# Web Frameworks #
+===============================================================================
+FLASK WEB APPLICATION LEARNING PROJECT - BLOG SYSTEM WITH USER AUTHENTICATION
+===============================================================================
+Author: Ben Tran (PhoenixWeaver)
+Date: 08/15/2025
+Project: BTPW_FlaskWeb_Demo
+Description: A modern Flask web application featuring blog system, user 
+            authentication, contact forms, and responsive UI design.
+GitHub: https://github.com/PhoenixWeaver/BTPW_FlaskWeb_Demo
+===============================================================================
 
 """
 📋 STEP-BY-STEP FIX INSTRUCTIONS
