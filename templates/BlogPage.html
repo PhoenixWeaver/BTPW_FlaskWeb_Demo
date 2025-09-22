@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Content</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #2c3e50;
+            color: white;
+        }
+        .container {
+            background-color: #34495e;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .welcome-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #3498db;
+        }
+        .welcome-message {
+            font-size: 2em;
+            color: #ecf0f1;
+            margin-bottom: 10px;
+        }
+        .welcome-subtitle {
+            color: #bdc3c7;
+            font-size: 1.1em;
+        }
+        .blog-post {
+            background-color: #2c3e50;
+            margin: 20px 0;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        .blog-title {
+            font-size: 1.8em;
+            color: #f39c12;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .blog-meta {
+            color: #bdc3c7;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .blog-author {
+            color: #3498db;
+            font-weight: bold;
+        }
+        .blog-date {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 25px;
+            display: inline-block;
+            font-weight: 500;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .blog-date::before {
+            content: '🕒';
+            margin-right: 8px;
+            font-size: 0.9em;
+        }
+        
+        .blog-date:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+        .blog-content {
+            line-height: 1.6;
+            color: #ecf0f1;
+            margin: 20px 0;
+            text-align: justify;
+        }
+        .blog-content p {
+            margin-bottom: 15px;
+        }
+        .new-post-section {
+            background-color: #2c3e50;
+            margin: 30px 0;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+        }
+        .new-post-section h3 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #ecf0f1;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #34495e;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn-create {
+            background-color: #e74c3c;
+        }
+        .btn-create:hover {
+            background-color: #c0392b;
+        }
+        .nav-links {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #34495e;
+        }
+        .nav-links a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        .nav-links a:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        .recent-post {
+            border-left: 4px solid #e74c3c;
+            background-color: #2c3e50;
+            position: relative;
+        }
+        .recent-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Header -->
+        <div class="welcome-header">
+            <div class="welcome-message">Welcome, {{ username if username else "Guest" }} to the blog!</div>
+            <div class="welcome-subtitle">Share your thoughts and read posts from others</div>
+        </div>
+        
+        <!-- New Post Form -->
+        <div class="new-post-section">
+            <h3>Create New Blog Post</h3>
+            <form action="/blog/content" method="GET">
+                <div class="form-group">
+                    <label for="name"> Who are you, warrior ?</label>
+                    <input type="text" id="name" name="name" placeholder="Got a Nickname / Stage Name / Game Name ?" required>
+                </div>
+                <div class="form-group">
+                    <label for="title">Blog Title:</label>
+                    <input type="text" id="title" name="title" placeholder="Enter blog title" required>
+                </div>
+                <div class="form-group">
+                    <label for="content">Blog Content:</label>
+                    <textarea id="content" name="content" placeholder="Enter your blog content" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-create">Post Blog</button>
+            </form>
+        </div>
+        
+        <!-- Blog Posts Display -->
+        {% if recent_post %}
+            <!-- Most Recent Post -->
+            <div class="blog-post recent-post">
+                <div class="recent-badge">NEW</div>
+                <div class="blog-title">{{ recent_post.title }}</div>
+                <div class="blog-meta">
+                    <span class="blog-author">By: {{ recent_post.name }}</span>
+                    <span class="blog-date">Posted on: {{ recent_post.date }}</span>
+                </div>
+                <div class="blog-content">
+                    {{ recent_post.content }}
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Previous Blog Posts -->
+        {% if blog_posts %}
+            {% for post in blog_posts %}
+            <div class="blog-post">
+                <div class="blog-title">{{ post.title }}</div>
+                <div class="blog-meta">
+                    <span class="blog-author">By: {{ post.name }}</span>
+                    <span class="blog-date">Posted on: {{ post.date }}</span>
+                </div>
+                <div class="blog-content">
+                    {{ post.content }}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- Sample blog posts for demonstration -->
+            <div class="blog-post">
+                <div class="blog-title">Getting Started with Flask Web Development</div>
+                <div class="blog-meta">
+                    <span class="blog-author">By: John Smith</span>
+                    <span class="blog-date">Posted on: January 15, 2024 at 2:30 PM</span>
+                </div>
+                <div class="blog-content">
+                    <p>Flask is a lightweight and flexible Python web framework that makes it easy to build web applications. In this post, we'll explore the basics of Flask and how to get started with web development using this powerful framework.</p>
+                    <p>Flask provides a simple yet powerful foundation for building web applications. It follows the WSGI standard and can be easily extended with various extensions to add functionality like database integration, form handling, and authentication.</p>
+                    <p>One of the key advantages of Flask is its simplicity. You can create a basic web application with just a few lines of code, making it perfect for beginners and rapid prototyping.</p>
+                </div>
+            </div>
+            
+            <div class="blog-post">
+                <div class="blog-title">Advanced Python Techniques for Web Development</div>
+                <div class="blog-meta">
+                    <span class="blog-author">By: Sarah Johnson</span>
+                    <span class="blog-date">Posted on: January 20, 2024 at 3:45 PM</span>
+                </div>
+                <div class="blog-content">
+                    <p>As you progress in your Python web development journey, you'll encounter various advanced techniques that can significantly improve your code quality and application performance.</p>
+                    <p>Decorators, context managers, and generators are just a few of the powerful Python features that can enhance your web applications. Understanding these concepts will help you write more efficient and maintainable code.</p>
+                    <p>In this comprehensive guide, we'll dive deep into these advanced Python techniques and show you how to apply them effectively in your web development projects.</p>
+                </div>
+            </div>
+            
+            <div class="blog-post">
+                <div class="blog-title">Building RESTful APIs with Flask</div>
+                <div class="blog-meta">
+                    <span class="blog-author">By: Michael Chen</span>
+                    <span class="blog-date">Posted on: January 25, 2024 at 1:15 PM</span>
+                </div>
+                <div class="blog-content">
+                    <p>RESTful APIs are essential for modern web applications, enabling seamless communication between different systems and services. Flask provides excellent support for building RESTful APIs with its simple and intuitive design.</p>
+                    <p>In this tutorial, we'll cover the fundamentals of REST architecture and demonstrate how to implement RESTful endpoints using Flask. We'll also explore best practices for API design, error handling, and documentation.</p>
+                    <p>By the end of this guide, you'll have a solid understanding of how to create robust and scalable APIs that can serve as the backbone for your web applications.</p>
+                </div>
+            </div>
+        {% endif %}
+        
+        <div class="nav-links">
+            <a href="/">← Back to Home</a>
+            <a href="/blog/ContactUs">Contact Us or Drop a Message</a>
+        </div>
+    </div>
+</body>
+</html>
