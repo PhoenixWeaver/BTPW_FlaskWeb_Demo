@@ -1,91 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Flask Blog</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        .btn {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-        }
-        .btn:hover {
-            background-color: #0056b3;
-        }
-        .welcome-message {
-            text-align: center;
-            font-size: 18px;
-            color: #666;
-            margin: 20px 0;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Welcome to Flask Blog</h1>
+{% extends "base.html" %}
+
+{% block title %}Login - Flask Blog{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 500px; margin: 2rem auto; padding: 2rem;">
+    <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+        <h1 style="text-align: center; color: #333; margin-bottom: 2rem;">
+            <i class="fas fa-sign-in-alt"></i> Welcome to Flask Blog
+        </h1>
         
         {% if username %}
-            <div class="welcome-message">
-                <p>Hello {{ username }}!</p>
-                <p>You are now logged in.</p>
-            </div>
-            <div style="text-align: center;">
-                <a href="/blog/content" class="btn" style="text-decoration: none; display: inline-block;">Go to Blog</a>
+            <div style="text-align: center; padding: 2rem; background: #e8f5e8; border-radius: 8px; margin-bottom: 2rem;">
+                <h3 style="color: #28a745; margin-bottom: 1rem;">
+                    <i class="fas fa-check-circle"></i> Welcome back, {{ username }}!
+                </h3>
+                <p style="color: #666; margin-bottom: 1.5rem;">You are already logged in.</p>
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <a href="{{ url_for('blog_content') }}" style="background: #007bff; color: white; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 5px; display: inline-block;">
+                        <i class="fas fa-newspaper"></i> Go to Blog
+                    </a>
+                    <a href="{{ url_for('logout') }}" style="background: #6c757d; color: white; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 5px; display: inline-block;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
             </div>
         {% else %}
-            <form action="/login" method="GET">
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            <form method="POST" action="{{ url_for('login') }}">
+                {{ form.hidden_tag() }}
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333;">
+                        <i class="fas fa-user"></i> {{ form.username.label.text }}
+                    </label>
+                    {{ form.username(class="form-control", style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;") }}
+                    {% if form.username.errors %}
+                        <div style="color: #dc3545; font-size: 0.875rem; margin-top: 0.25rem;">
+                            {% for error in form.username.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333;">
+                        <i class="fas fa-lock"></i> {{ form.password.label.text }}
+                    </label>
+                    {{ form.password(class="form-control", style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px; font-size: 1rem;") }}
+                    {% if form.password.errors %}
+                        <div style="color: #dc3545; font-size: 0.875rem; margin-top: 0.25rem;">
+                            {% for error in form.password.errors %}{{ error }}{% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
-                <button type="submit" class="btn">Login</button>
+                
+                <button type="submit" style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.875rem; border: none; border-radius: 5px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: transform 0.2s;">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
             </form>
+            
+            <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #eee;">
+                <p style="color: #666; margin-bottom: 1rem;">Demo Credentials:</p>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 5px; font-family: monospace; font-size: 0.9rem;">
+                    <div><strong>Username:</strong> admin</div>
+                    <div><strong>Password:</strong> password123</div>
+                </div>
+            </div>
         {% endif %}
     </div>
-</body>
-</html>
+</div>
+
+<style>
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+</style>
+{% endblock %}

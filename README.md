@@ -1,22 +1,41 @@
 # 🚀 Flask Blog Web Application
 
-A modern, responsive Flask web application featuring a blog system with user authentication, contact forms, and dynamic content management.
+A modern, responsive Flask web application featuring a blog system with user authentication, contact forms, and dynamic content management. **Recently updated with modern Flask practices, database integration, and enhanced security features!**
 
 ## ✨ Features
 
-- **User Authentication** - Simple login system with session management
-- **Blog System** - Create, read, and manage blog posts
-- **Contact Form** - Send messages with CSV data storage
-- **Responsive Design** - Modern UI that works on all devices
-- **Dynamic Content** - Real-time blog post creation and display
-- **CSV Data Storage** - Contact messages saved to CSV file
+### 🔐 **Authentication & Security**
+- **Secure Login System** - Session-based authentication with password hashing
+- **CSRF Protection** - Built-in CSRF protection for form security
+- **Input Validation** - Comprehensive form validation with WTForms
+- **Session Management** - Secure user sessions with automatic logout
+
+### 📝 **Blog System**
+- **Database Integration** - SQLite database for persistent data storage
+- **Create & Manage Posts** - Full CRUD operations for blog posts
+- **Real-time Updates** - Dynamic content creation and display
+- **Author Management** - Track post authors and creation dates
+
+### 📧 **Contact System**
+- **Modern Contact Form** - Professional contact form with validation
+- **Database Storage** - Contact messages stored in SQLite database
+- **Email Validation** - Proper email format validation
+- **Success Notifications** - Flash messages for user feedback
+
+### 🎨 **Modern UI/UX**
+- **Responsive Design** - Mobile-first design that works on all devices
+- **Modern Navigation** - Clean navigation bar with user status
+- **Flash Messages** - Animated success/error notifications
+- **Professional Styling** - Modern CSS with gradients and animations
 
 ## 🛠️ Technologies Used
 
-- **Backend**: Python Flask
-- **Frontend**: HTML5, CSS3, Jinja2 Templates
-- **Data Storage**: In-memory (blog posts), CSV (contact messages)
-- **Styling**: Custom CSS with modern design patterns
+- **Backend**: Python Flask 3.0.0
+- **Database**: SQLite with SQLAlchemy-style queries
+- **Forms**: Flask-WTF with WTForms validation
+- **Security**: CSRF protection, password hashing, session management
+- **Frontend**: HTML5, CSS3, Jinja2 Templates, Font Awesome icons
+- **Styling**: Modern CSS with gradients, animations, and responsive design
 
 ## 📋 Prerequisites
 
@@ -27,7 +46,7 @@ A modern, responsive Flask web application featuring a blog system with user aut
 
 ### 1. Clone the Repository
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/PhoenixWeaver/BTPW_FlaskWeb_Demo.git
 cd BTPW_FlaskWeb_Demo
 ```
 
@@ -36,17 +55,25 @@ cd BTPW_FlaskWeb_Demo
 pip install -r requirements.txt
 ```
 
-### 3. Run the Application
+### 3. Setup Database
+```bash
+python setup_database.py
+```
+
+### 4. Run the Application
 ```bash
 python BTPW_FlaskWeb.py
 ```
 
-### 4. Access the Application
+### 5. Access the Application
 Open your web browser and navigate to:
 - **Homepage**: http://127.0.0.1:5000/
-- **Login**: http://127.0.0.1:5000/login
 - **Blog**: http://127.0.0.1:5000/blog/content
 - **Contact**: http://127.0.0.1:5000/blog/ContactUs
+
+### 🔑 Demo Credentials
+- **Username**: `admin`
+- **Password**: `password123`
 
 ## 📖 Usage Guide
 
@@ -177,7 +204,6 @@ This project is open source and available under the [MIT License](LICENSE).
 ## 👨‍💻 Author
 
 **Ben Tran (PhoenixWeaver)**
-- Email: bentran.information@gmail.com
 - GitHub: [@PhoenixWeaver](https://github.com/PhoenixWeaver)
 
 ## 🙏 Acknowledgments

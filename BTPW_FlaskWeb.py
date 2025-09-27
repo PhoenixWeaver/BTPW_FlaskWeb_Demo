@@ -1,3 +1,4 @@
+"""
 ===============================================================================
 FLASK WEB APPLICATION LEARNING PROJECT - BLOG SYSTEM WITH USER AUTHENTICATION
 ===============================================================================
@@ -9,12 +10,11 @@ Description: A modern Flask web application featuring blog system, user
 GitHub: https://github.com/PhoenixWeaver/BTPW_FlaskWeb_Demo
 ===============================================================================
 
-"""
 📋 STEP-BY-STEP FIX INSTRUCTIONS
 Step 1: Start Your Flask App
 # In your terminal/command prompt:
-cd "C:/Users/Admin/Documents/PYTHON/BTPython/BT_FlaskWeb_Template"
-python BTFlaskWeb.py
+cd "C:\\Users\\Admin\\Documents\\PYTHON\\BTPython\\BTPW_FlaskWeb_Demo"
+python BTPW_FlaskWeb.py
 
 Step 2: Access Your App Correctly
 ✅ DO THIS:
@@ -36,136 +36,259 @@ https://www.learnpython.dev/03-intermediate-python/
 =====================================================================================================================================
 """
 
-# 1. Create a Flask app
-from flask import Flask, render_template, request, redirect, url_for
+# 1. Create a Flask app with modern configuration
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask_wtf import FlaskForm, CSRFProtect
+from wtforms import StringField, TextAreaField, EmailField, SubmitField, PasswordField
+from wtforms.validators import DataRequired, Email, Length
 from datetime import datetime
+import sqlite3
+import os
+import hashlib
+import secrets
+
+# Initialize Flask app with modern configuration
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secrets.token_hex(32))
+app.config['WTF_CSRF_ENABLED'] = True
 
-# Simple in-memory storage for blog posts and current user
-blog_posts = []
-current_user = None
+# Initialize CSRF protection
+csrf = CSRFProtect(app)
 
-# 2. Create routes
+# Database setup
+DATABASE = 'blog_database.db'
+
+def init_db():
+    """Initialize the database with required tables"""
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    
+    # Create blog posts table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS blog_posts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL,
+            author TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    # Create users table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            email TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    # Create contact messages table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS contact_messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            subject TEXT NOT NULL,
+            message TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    conn.commit()
+    conn.close()
+
+# Initialize database on startup
+init_db()
+
+# WTForms for better form handling
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=20)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    submit = SubmitField('Login')
+
+class BlogPostForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired(), Length(min=5, max=100)])
+    content = TextAreaField('Content', validators=[DataRequired(), Length(min=10, max=1000)])
+    author = StringField('Author', validators=[DataRequired(), Length(min=2, max=50)])
+    submit = SubmitField('Create Post')
+
+class ContactForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(min=2, max=50)])
+    email = EmailField('Email', validators=[DataRequired(), Email()])
+    subject = StringField('Subject', validators=[DataRequired(), Length(min=5, max=100)])
+    content = TextAreaField('Message', validators=[DataRequired(), Length(min=10, max=500)])
+    submit = SubmitField('Send Message')
+
+# Database helper functions
+def get_db_connection():
+    """Get database connection"""
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def hash_password(password):
+    """Hash password using SHA-256"""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def verify_user(username, password):
+    """Verify user credentials"""
+    conn = get_db_connection()
+    user = conn.execute(
+        'SELECT * FROM users WHERE username = ?', (username,)
+    ).fetchone()
+    conn.close()
+    
+    if user and user['password_hash'] == hash_password(password):
+        return True
+    return False
+
+# 2. Create routes with modern Flask practices
 @app.route('/')
 def index():
-    global current_user
-    return render_template('index.html', username=current_user)
+    """Homepage with login form"""
+    form = LoginForm()
+    return render_template('index.html', form=form, username=session.get('username'))
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    global current_user
-    username = request.args.get('username')
-    password = request.args.get('password')
+    """Enhanced login with form validation"""
+    form = LoginForm()
     
-# In-memory data storage (NOT production-ready!)
-# This is a simple way to store data in memory for learning purposes
-# In a real application, you'd use a database like SQLite, PostgreSQL, etc.
-# >>> PhonenixWeaver/BTPW_GoHTTP_Server
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        
+        if verify_user(username, password):
+            session['username'] = username
+            flash('Login successful!', 'success')
+            return redirect(url_for('blog_content'))
+        else:
+            flash('Invalid username or password', 'error')
+    
+    return render_template('index.html', form=form, username=session.get('username'))
 
-    if username and password:
-        current_user = username
-        return redirect(url_for('blog_content'))
+@app.route('/logout')
+def logout():
+    """Logout user"""
+    session.pop('username', None)
+    flash('You have been logged out', 'info')
     return redirect(url_for('index'))
 
-@app.route("/blog/content")
+@app.route("/blog/content", methods=['GET', 'POST'])
 def blog_content():
-    global current_user, blog_posts
+    """Blog page with database integration"""
+    if 'username' not in session:
+        flash('Please login to access the blog', 'warning')
+        return redirect(url_for('index'))
     
-    # Check if there's a new post being submitted
-    name = request.args.get('name')
-    title = request.args.get('title')
-    content = request.args.get('content')
+    form = BlogPostForm()
     
-    recent_post = None
-    if name and title and content:
-        # Create new blog post
-        new_post = {
-            'name': name,
-            'title': title,
-            'content': content,
-            'date': datetime.now().strftime('%B %d, %Y at %I:%M %p')
-        }
-        blog_posts.insert(0, new_post)  # Add to beginning of list
-        recent_post = new_post
+    if form.validate_on_submit():
+        # Save new blog post to database
+        conn = get_db_connection()
+        conn.execute(
+            'INSERT INTO blog_posts (title, content, author) VALUES (?, ?, ?)',
+            (form.title.data, form.content.data, form.author.data)
+        )
+        conn.commit()
+        conn.close()
+        
+        flash('Blog post created successfully!', 'success')
+        return redirect(url_for('blog_content'))
+    
+    # Get all blog posts from database
+    conn = get_db_connection()
+    blog_posts = conn.execute(
+        'SELECT * FROM blog_posts ORDER BY created_at DESC'
+    ).fetchall()
+    conn.close()
     
     return render_template('BlogPage.html', 
-                         username=current_user, 
-                         blog_posts=blog_posts[1:] if recent_post else blog_posts,
-                         recent_post=recent_post)
+                         username=session.get('username'), 
+                         blog_posts=blog_posts,
+                         form=form)
 
-@app.route("/blog/ContactUs")
+@app.route("/blog/ContactUs", methods=['GET', 'POST'])
 def contact_us():
-    return render_template('ContactUs.html') 
+    """Contact page with form validation"""
+    form = ContactForm()
+    
+    if form.validate_on_submit():
+        # Save contact message to database
+        conn = get_db_connection()
+        conn.execute(
+            'INSERT INTO contact_messages (name, email, subject, message) VALUES (?, ?, ?, ?)',
+            (form.name.data, form.email.data, form.subject.data, form.content.data)
+        )
+        conn.commit()
+        conn.close()
+        
+        flash('Message sent successfully! We will get back to you soon.', 'success')
+        return redirect(url_for('contact_us'))
+    
+    return render_template('ContactUs.html', form=form)
 
 @app.route("/user/<username>")
 def user_page(username):
+    """User profile page"""
+    if 'username' not in session:
+        flash('Please login to view profiles', 'warning')
+        return redirect(url_for('index'))
     return render_template('user.html', username=username)
 
 @app.route("/user")
 def user_form():
+    """User form page"""
     username = request.args.get('username', 'Guest')
     return render_template('user.html', username=username)
 
 @app.route("/blog/post/<int:post_id>") 
 def show_post(post_id):
-    return render_template('blog_post.html', post_id=post_id)
+    """Individual blog post page"""
+    conn = get_db_connection()
+    post = conn.execute(
+        'SELECT * FROM blog_posts WHERE id = ?', (post_id,)
+    ).fetchone()
+    conn.close()
+    
+    if post is None:
+        flash('Blog post not found', 'error')
+        return redirect(url_for('blog_content'))
+    
+    return render_template('blog_post.html', post=post)
 
 # Keep the old secret page route for backward compatibility
 @app.route("/my/secret/page")
 def secret():
+    """Secret page (demo)"""
+    if 'username' not in session:
+        flash('Please login to access secret page', 'warning')
+        return redirect(url_for('index'))
     return render_template('secret.html')
 
-# Handle contact form submissions
-@app.route("/contact/submit", methods=['POST'])
-def submit_contact():
-    # Get form data
-    name = request.form.get('name')
-    email = request.form.get('email') 
-    subject = request.form.get('subject')
-    message = request.form.get('content')
+@app.route('/api/posts')
+def api_posts():
+    """API endpoint for blog posts"""
+    conn = get_db_connection()
+    posts = conn.execute(
+        'SELECT * FROM blog_posts ORDER BY created_at DESC'
+    ).fetchall()
+    conn.close()
     
-    # Simple validation
-    if name and email and subject and message:
-        # Save contact message to CSV file
-        import csv
-        import os
-        from datetime import datetime
+    return jsonify([dict(post) for post in posts])
 
-        # Create CSV file if it doesn't exist
-        csv_file = 'contact_messages.csv'
-        file_exists = os.path.exists(csv_file)
+@app.errorhandler(404)
+def not_found(error):
+    """404 error handler"""
+    return render_template('404.html'), 404
 
-        try:
-            with open(csv_file, 'a', newline='', encoding='utf-8') as f:
-                writer = csv.writer(f)
-                
-                # Write header if file is new
-                if not file_exists:
-                    writer.writerow(['Date', 'Time', 'Name', 'Email', 'Subject', 'Message'])
-                
-                # Write message data
-                current_time = datetime.now()
-                writer.writerow([
-                    current_time.strftime('%Y-%m-%d'),
-                    current_time.strftime('%H:%M:%S'),
-                    name,
-                    email,
-                    subject,
-                    message
-                ])
-            
-            print(f"✅ Contact message saved to: {csv_file}")
-            print(f"📧 From: {name} ({email})")
-            print(f"🎯 Subject: {subject}")
-            
-        except Exception as e:
-            print(f"❌ Error saving contact message: {e}")
-        
-        # Redirect back to contact page with success message
-        return redirect(url_for('contact_us', success='true'))
-    else:
-        # Redirect back with error message
-        return redirect(url_for('contact_us', error='true'))
+@app.errorhandler(500)
+def internal_error(error):
+    """500 error handler"""
+    return render_template('500.html'), 500
 
 ############################################
 # 3. returning data
