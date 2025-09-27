@@ -42,6 +42,16 @@ A modern, responsive Flask web application featuring a blog system with user aut
 - Python 3.7 or higher
 - pip (Python package installer)
 
+## 🖼️ Application Screenshots
+
+### 📱 What the Application Looks Like
+
+| Feature | Screenshot | Description |
+|---------|------------|-------------|
+| **Blog Interface** | ![Flask Blog](OutputSamples/Flask_Blog.png) | Modern blog interface with post creation and management |
+| **Contact Form** | ![Flask Contact](OutputSamples/Flask_contact.png) | Professional contact form with validation |
+| **Secret Page** | ![Flask Secret](OutputSamples/Flask_secret.jpeg) | Demo secret page with user authentication |
+
 ## 🚀 Quick Start
 
 ### 1. Clone the Repository
@@ -62,6 +72,10 @@ python setup_database.py
 
 ### 4. Run the Application
 ```bash
+# Option 1: Simplified version (recommended)
+python BTPW_FlaskWeb_Simple.py
+
+# Option 2: Full version with advanced features
 python BTPW_FlaskWeb.py
 ```
 
@@ -179,6 +193,15 @@ python BTPW_FlaskWeb.py
 
 ## 📚 Learning Resources
 
+### 🎓 Educational Value
+This project serves as an excellent learning resource for:
+- **Flask Framework** - Complete web application development
+- **Database Integration** - SQLite with CRUD operations
+- **Modern UI/UX** - Responsive design and user experience
+- **Security Practices** - Authentication, CSRF protection, input validation
+- **Web Development** - Full-stack development concepts
+
+### 📖 Learning Guide
 This project includes a comprehensive learning guide: `BenTran_PhoenixWeaver_LEARNING_GUIDE.md`
 
 Topics covered:
@@ -188,6 +211,15 @@ Topics covered:
 - Form handling and data processing
 - HTML5 and CSS3 concepts
 - Web development best practices
+- Database design and integration
+- Security implementation
+
+### 🖼️ Visual Learning
+The `OutputSamples/` folder contains screenshots showing:
+- **Real application interface** - See exactly what users will experience
+- **Feature demonstrations** - Visual examples of each functionality
+- **UI/UX examples** - Modern design patterns and responsive layouts
+- **Educational reference** - Perfect for learning and teaching
 
 ## 🤝 Contributing
 
